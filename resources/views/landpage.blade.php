@@ -54,6 +54,48 @@
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        /* WhatsApp Floating Button */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 20px rgba(0,0,0,0.4);
+            animation: none;
+        }
+        .whatsapp-float svg {
+            width: 35px;
+            height: 35px;
+            fill: white;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -63,20 +105,18 @@
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 gradient-bg rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                        KD
-                    </div>
+                    <img src="{{ asset('image/logo-kantin.png') }}" alt="Logo Kantin D-pipe" class="w-12 h-12 rounded-lg object-cover shadow-md">
                     <div>
                         <h1 class="text-2xl font-bold text-gray-800">Kantin D-pipe</h1>
                         <p class="text-xs text-gray-500">Pesan Makanan Kampus</p>
                     </div>
                 </div>
-
                 <div class="flex items-center space-x-4">
                     <a href="#menu" class="hidden md:block text-gray-600 hover:text-orange-500 transition">Menu</a>
                     <a href="#tentang" class="hidden md:block text-gray-600 hover:text-orange-500 transition">Tentang</a>
-                    <button onclick="openAdminLoginModal()" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition font-medium">
-                        Login Admin
+                    <!-- Tombol Login -->
+                    <button onclick="openUserLoginModal()" class="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition font-medium">
+                        Masuk / Daftar
                     </button>
                 </div>
             </div>
@@ -119,7 +159,7 @@
                 <!-- Menu Item 1 -->
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover">
                     <div class="h-48 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                        <span class="text-8xl">🍚</span>
+                        <img src="{{ asset('image/resepnasigila.png') }}" alt="Nasi Gila" class="w-32 h-32 rounded-lg object-cover shadow-md">
                     </div>
                     <div class="p-6">
                         <h4 class="text-xl font-bold text-gray-800 mb-2">Nasi Gila</h4>
@@ -210,6 +250,16 @@
         </div>
     </section>
 
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6281234567890?text=Halo%20Kantin%20D-pipe,%20saya%20ingin%20menayakan%20sesuatu"
+       target="_blank"
+       class="whatsapp-float"
+       title="Chat WhatsApp">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.002 0h-.004C7.162 0 0 7.162 0 16c0 3.5 1.128 6.738 3.042 9.366L1.05 30.952l5.814-1.938C9.377 30.866 12.574 32 16.002 32 24.838 32 32 24.838 32 16S24.838 0 16.002 0zm9.522 22.684c-.408 1.15-2.028 2.108-3.312 2.384-.878.184-2.022.334-5.876-1.262-4.912-2.034-8.086-6.984-8.33-7.304-.244-.318-1.994-2.656-1.994-5.066s1.262-3.594 1.71-4.086c.448-.49 1.008-.612 1.364-.612.326 0 .652.006.938.018.306.012.714-.116 1.118.854.408 1.008 1.394 3.418 1.518 3.666.122.246.204.532.042.85-.164.326-.244.53-.49.818-.244.286-.514.64-.734.858-.244.246-.498.512-.214.998.286.49 1.268 2.092 2.722 3.386 1.87 1.662 3.444 2.178 3.932 2.424.49.246.774.204 1.058-.122.286-.326 1.23-1.438 1.558-1.93.326-.49.654-.408 1.102-.246.45.162 2.856 1.348 3.346 1.594.49.244.816.368.938.572.122.204.122 1.18-.286 2.33z"/>
+        </svg>
+    </a>
+
     <!-- Footer -->
     <footer class="gradient-bg py-8 px-6 text-white">
         <div class="container mx-auto text-center">
@@ -260,36 +310,6 @@
         </div>
     </div>
 
-    <!-- Modal Login Admin -->
-    <div id="adminLoginModal" class="modal">
-        <div class="modal-content bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 p-8">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="text-3xl">👨‍💼</span>
-                </div>
-                <h3 class="text-3xl font-bold text-gray-800 mb-2">Login Admin</h3>
-                <p class="text-gray-600">Masuk ke panel administrator</p>
-            </div>
-
-            <div class="space-y-4">
-                <!-- Role Admin -->
-                <a href="/login/admin" class="block bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4 rounded-xl hover:shadow-xl transition transform hover:scale-105">
-                    <div class="flex items-center justify-center">
-                        <div class="text-4xl mr-4">👨‍💼</div>
-                        <div>
-                            <h4 class="font-bold text-lg">Admin</h4>
-                            <p class="text-sm opacity-90">Kelola sistem kantin</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <button onclick="closeAdminLoginModal()" class="w-full mt-6 text-gray-600 py-3 rounded-xl border-2 border-gray-200 hover:bg-gray-50 transition">
-                Batal
-            </button>
-        </div>
-    </div>
-
     <script>
         // Modal User Login (Pembeli & Penjual)
         function openUserLoginModal() {
@@ -300,25 +320,10 @@
             document.getElementById('userLoginModal').classList.remove('active');
         }
 
-        // Modal Admin Login
-        function openAdminLoginModal() {
-            document.getElementById('adminLoginModal').classList.add('active');
-        }
-
-        function closeAdminLoginModal() {
-            document.getElementById('adminLoginModal').classList.remove('active');
-        }
-
         // Close modal when clicking outside
         document.getElementById('userLoginModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeUserLoginModal();
-            }
-        });
-
-        document.getElementById('adminLoginModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAdminLoginModal();
             }
         });
 
@@ -338,4 +343,4 @@
     </script>
 
 </body>
-</html>     
+</html>

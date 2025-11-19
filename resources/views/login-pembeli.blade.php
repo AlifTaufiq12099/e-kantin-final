@@ -62,23 +62,24 @@
 
                     <!-- Username -->
                     <div>
-                        <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Username
-                        </label>
+                        <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Email
+                            </label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                             </div>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                required
-                                class="input-focus w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition"
-                                placeholder="Masukkan username"
-                            >
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    value="{{ old('email') }}"
+                                    class="input-focus w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition"
+                                    placeholder="Masukkan email"
+                                >
                         </div>
                     </div>
 
@@ -215,7 +216,7 @@
         </div>
     </div>
 
-  
+
 
 </body>
 </html>

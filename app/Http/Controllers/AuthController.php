@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Admin;
+use App\Models\Penjual;
+use App\Models\Lapak;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -21,48 +27,44 @@ class AuthController extends Controller
     {
         // Validasi input
         $request->validate([
-            'username' => 'required',
+            'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        $username = $request->username;
+        $email = $request->email;
         $password = $request->password;
 
-        // Hardcode username & password pembeli
-        $validUsername = 'Alif';
-        $validPassword = '123';
-
         // Cek apakah variabel tersedia
-        if (isset($username) && isset($password)) {
-            // Cek username dan password
-            if ($username === $validUsername && $password === $validPassword) {
-                // Login berhasil - simpan session
+        if (isset($email) && isset($password)) {
+            // Coba autentikasi menggunakan guard default (users table)
+            $credentials = ['email' => $email, 'password' => $password];
+            if (Auth::attempt($credentials)) {
+                $user = Auth::user();
                 session([
-                    'user_id' => 1,
-                    'username' => $username,
+                    'user_id' => $user->id,
+                    'username' => $user->name,
                     'role' => 'pembeli',
                     'logged_in' => true
                 ]);
 
-                // Redirect ke dashboard pembeli
-                return redirect()->to('/home')->with([
+                return redirect()->route('pembeli.lapak.select')->with([
                     'key' => 'success',
                     'value' => 'Login berhasil!'
                 ]);
-            } else {
-                // Username atau password salah
-                return back()->with([
-                    'key' => 'error',
-                    'value' => 'Username atau Password salah!'
-                ]);
             }
-        } else {
-            // Form tidak lengkap
+
+            // Email atau password salah
             return back()->with([
                 'key' => 'error',
-                'value' => 'Form tidak lengkap!'
-            ]);
+                'value' => 'Email atau Password salah!'
+            ])->withInput();
         }
+
+        // Form tidak lengkap
+        return back()->with([
+            'key' => 'error',
+            'value' => 'Form tidak lengkap!'
+        ]);
     }
 
     /**
@@ -87,41 +89,38 @@ class AuthController extends Controller
         $username = $request->username;
         $password = $request->password;
 
-        // Hardcode username & password penjual
-        $validUsername = 'penjual';
-        $validPassword = '123';
-
         // Cek apakah variabel tersedia
         if (isset($username) && isset($password)) {
-            // Cek username dan password
-            if ($username === $validUsername && $password === $validPassword) {
-                // Login berhasil - simpan session
+            // Gunakan Laravel Auth guard 'penjual' untuk mencoba login
+            $credentials = ['email' => $username, 'password' => $password];
+            if (Auth::guard('penjual')->attempt($credentials)) {
+                $penjual = Auth::guard('penjual')->user();
                 session([
-                    'user_id' => 2,
-                    'username' => $username,
+                    'user_id' => $penjual->penjual_id,
+                    'username' => $penjual->nama_penjual,
                     'role' => 'penjual',
+                    'lapak_id' => $penjual->lapak_id,
                     'logged_in' => true
                 ]);
 
-                // Redirect ke dashboard penjual
                 return redirect()->to('/penjual/dashboard')->with([
                     'key' => 'success',
                     'value' => 'Login berhasil!'
                 ]);
-            } else {
-                // Username atau password salah
-                return back()->with([
-                    'key' => 'error',
-                    'value' => 'Username atau Password salah!'
-                ]);
             }
-        } else {
-            // Form tidak lengkap
+
+            // Username atau password salah
             return back()->with([
                 'key' => 'error',
-                'value' => 'Form tidak lengkap!'
+                'value' => 'Email atau Password salah!'
             ]);
         }
+
+        // Form tidak lengkap
+        return back()->with([
+            'key' => 'error',
+            'value' => 'Form tidak lengkap!'
+        ]);
     }
 
     /**
@@ -146,41 +145,38 @@ class AuthController extends Controller
         $username = $request->username;
         $password = $request->password;
 
-        // Hardcode username & password admin
-        $validUsername = 'admin';
-        $validPassword = '123';
-
         // Cek apakah variabel tersedia
         if (isset($username) && isset($password)) {
-            // Cek username dan password
-            if ($username === $validUsername && $password === $validPassword) {
-                // Login berhasil - simpan session
+            // Gunakan Laravel Auth guard 'admin' untuk mencoba login
+            $credentials = ['username' => $username, 'password' => $password];
+            if (Auth::guard('admin')->attempt($credentials)) {
+                // Set session info (optional, keep compatible with existing checks)
+                $admin = Auth::guard('admin')->user();
                 session([
-                    'user_id' => 3,
-                    'username' => $username,
+                    'user_id' => $admin->admin_id,
+                    'username' => $admin->username,
                     'role' => 'admin',
                     'logged_in' => true
                 ]);
 
-                // Redirect ke dashboard admin
                 return redirect()->to('/admin/dashboard')->with([
                     'key' => 'success',
                     'value' => 'Login berhasil!'
                 ]);
-            } else {
-                // Username atau password salah
-                return back()->with([
-                    'key' => 'error',
-                    'value' => 'Username atau Password salah!'
-                ]);
             }
-        } else {
-            // Form tidak lengkap
+
+            // Username atau password salah
             return back()->with([
                 'key' => 'error',
-                'value' => 'Form tidak lengkap!'
+                'value' => 'Username atau Password salah!'
             ]);
         }
+
+        // Form tidak lengkap
+        return back()->with([
+            'key' => 'error',
+            'value' => 'Form tidak lengkap!'
+        ]);
     }
 
     /**
@@ -196,4 +192,44 @@ class AuthController extends Controller
             'value' => 'Logout berhasil!'
         ]);
     }
+
+    /**
+     * Show register form pembeli
+     */
+    public function showRegisterPembeli()
+    {
+        return view('register-pembeli');
+    }
+
+    /**
+     * Handle register pembeli
+     */
+    public function registerPembeli(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        if ($user) {
+            return redirect()->route('login.pembeli')->with([
+                'key' => 'success',
+                'value' => 'Pendaftaran berhasil. Silakan login.'
+            ]);
+        }
+
+        return back()->with([
+            'key' => 'error',
+            'value' => 'Terjadi kesalahan saat mendaftar.'
+        ])->withInput();
+    }
+
+
 }
